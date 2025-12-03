@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Controlled 3D Particles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div id="loading">
+        <div class="loader"></div>
+        <div class="loading-text">Initializing Hand Tracking</div>
+        <div class="loading-sub">Please allow camera access</div>
+    </div>
+
+    <div id="ui-container">
+        <div class="header">
+            <div class="header-icon">✨</div>
+            <div>
+                <h1>Particle Controller</h1>
+                <div class="subtitle">Gesture-powered 3D system</div>
+            </div>
+        </div>
+        
+        <label>Select Template</label>
+        <div class="grid-buttons">
+            <button class="shape-btn active" data-shape="heart">
+                <span class="icon">💖</span>
+                Heart
+            </button>
+            <button class="shape-btn" data-shape="flower">
+                <span class="icon">🌸</span>
+                Flower
+            </button>
+            <button class="shape-btn" data-shape="saturn">
+                <span class="icon">🪐</span>
+                Saturn
+            </button>
+            <button class="shape-btn" data-shape="buddha">
+                <span class="icon">🧘</span>
+                Statue
+            </button>
+            <button class="shape-btn" data-shape="fireworks">
+                <span class="icon">🎆</span>
+                Fireworks
+            </button>
+            <button class="shape-btn" data-shape="sphere">
+                <span class="icon">⚪</span>
+                Sphere
+            </button>
+        </div>
+
+        <label>Particle Color</label>
+        <div class="color-wrapper">
+            <div class="color-picker-circle">
+                <input type="color" id="colorPicker" value="#00d4ff">
+            </div>
+            <div class="color-info">
+                <div class="color-label">Current Color</div>
+                <div class="color-value" id="colorValue">#00d4ff</div>
+            </div>
+        </div>
+
+        <label>Gesture Mode</label>
+        <div class="mode-toggle">
+            <button class="mode-btn active" data-mode="scale">
+                📏 Scale
+            </button>
+            <button class="mode-btn" data-mode="rotate">
+                🔄 Rotate
+            </button>
+            <button class="mode-btn" data-mode="both">
+                ⚡ Both
+            </button>
+        </div>
+
+        <div id="hand-status">
+            <span class="status-dot"></span>
+            <span id="status-text">Waiting for hands...</span>
+        </div>
+        
+        <div class="indicator-group">
+            <div class="indicator-row">
+                <span class="indicator-label">Scale</span>
+                <div class="indicator-bar">
+                    <div class="indicator-fill" id="scale-bar"></div>
+                </div>
+            </div>
+            <div class="indicator-row">
+                <span class="indicator-label">Rot X</span>
+                <div class="indicator-bar">
+                    <div class="indicator-fill" id="rotation-x-bar"></div>
+                </div>
+            </div>
+            <div class="indicator-row">
+                <span class="indicator-label">Rot Y</span>
+                <div class="indicator-bar">
+                    <div class="indicator-fill" id="rotation-y-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rotation-viz">
+            <div class="axis-indicator x-axis" id="x-axis-viz">
+                <span class="axis-label">X</span>
+            </div>
+            <div class="axis-indicator y-axis" id="y-axis-viz">
+                <span class="axis-label">Y</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <div class="instructions-row">
+            <span>✋↔️✋ Hands apart = Expand</span>
+            <span>🤏 Pinch = Compress</span>
+        </div>
+        <div class="instructions-row">
+            <span>🖐️↕️ Tilt hand = Rotate X</span>
+            <span>🖐️↔️ Tilt hand = Rotate Y</span>
+        </div>
+        <div class="instructions-row">
+            <span>✊ Fist = Lock rotation</span>
+        </div>
+    </div>
+
+    <div id="camera-preview">
+        <canvas id="preview-canvas"></canvas>
+    </div>
+
+    <video class="input_video"></video>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <!-- Application Modules -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
+
