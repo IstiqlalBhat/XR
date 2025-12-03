@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#090a0f">
     <title>Gesture Controlled 3D Particles</title>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -14,6 +18,10 @@
         <div class="loading-text">Initializing Hand Tracking</div>
         <div class="loading-sub">Please allow camera access</div>
     </div>
+
+    <button id="ui-toggle" class="ui-toggle-btn" aria-label="Toggle UI Panel">
+        <span class="toggle-icon">⚙️</span>
+    </button>
 
     <div id="ui-container">
         <div class="header">

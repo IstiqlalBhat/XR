@@ -3,7 +3,7 @@
  * Orchestrates all modules and manages the application
  */
 
-import { CONFIG } from './config.js';
+import { CONFIG, getOptimizedConfig, DeviceDetector } from './config.js';
 import { SmoothValue, EMAFilter } from './smoothing.js';
 import { HandTrackingState } from './hand-tracking.js';
 import { GestureDetection } from './gesture-detection.js';
@@ -14,12 +14,21 @@ import { CameraPreview } from './camera-preview.js';
 
 export class ParticleController {
     constructor() {
-        this.config = CONFIG;
+        // Detect device and apply optimized config
+        this.isMobile = DeviceDetector.isMobile();
+        this.deviceType = DeviceDetector.getDeviceType();
+        this.config = getOptimizedConfig();
+
         this.gestureMode = 'both';
         this.currentShape = 'heart';
         this.autoRotate = true;
         this.baseRotationY = 0;
         this.handPosition3D = null; // 3D position of hand in world space
+
+        console.log(`Device detected: ${this.deviceType}`, {
+            particleCount: this.config.particle.count,
+            isMobile: this.isMobile
+        });
 
         this.initializeSmoothing();
         this.initializeThreeJS();
@@ -71,9 +80,16 @@ export class ParticleController {
             75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.z = 8;
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: !this.isMobile, // Disable antialiasing on mobile for performance
+            alpha: true,
+            powerPreference: this.isMobile ? 'low-power' : 'high-performance'
+        });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Limit pixel ratio on mobile devices for better performance
+        const maxPixelRatio = this.deviceType === 'phone' ? 1.5 : 2;
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
         this.renderer.toneMapping = THREE.ReinhardToneMapping;
         document.body.appendChild(this.renderer.domElement);
 
@@ -94,12 +110,28 @@ export class ParticleController {
         const renderPass = new THREE.RenderPass(this.scene, this.camera);
         this.composer.addPass(renderPass);
 
+        // Adjust bloom settings based on device type
+        let bloomStrength, bloomRadius, bloomThreshold;
+        if (this.deviceType === 'phone') {
+            bloomStrength = 1.0;  // Reduced for performance
+            bloomRadius = 0.3;
+            bloomThreshold = 0.9;
+        } else if (this.deviceType === 'tablet') {
+            bloomStrength = 1.2;
+            bloomRadius = 0.35;
+            bloomThreshold = 0.87;
+        } else {
+            bloomStrength = 1.5;
+            bloomRadius = 0.4;
+            bloomThreshold = 0.85;
+        }
+
         // Add bloom pass (creates the glow effect)
         const bloomPass = new THREE.UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            1.5,    // Bloom strength (intensity of glow)
-            0.4,    // Bloom radius (spread of glow)
-            0.85    // Bloom threshold (minimum brightness to glow)
+            bloomStrength,
+            bloomRadius,
+            bloomThreshold
         );
         this.composer.addPass(bloomPass);
 
@@ -126,21 +158,29 @@ export class ParticleController {
                 `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
         
+        // Adjust MediaPipe model complexity based on device
+        const modelComplexity = this.deviceType === 'phone' ? 0 : 1;
+
         this.hands.setOptions({
             maxNumHands: this.config.hand.maxHands,
-            modelComplexity: 1,
+            modelComplexity: modelComplexity,
             minDetectionConfidence: this.config.hand.detectionConfidence,
             minTrackingConfidence: this.config.hand.trackingConfidence
         });
-        
+
         this.hands.onResults(this.onHandsResults.bind(this));
-        
+
+        // Reduce camera resolution on mobile devices
+        const cameraWidth = this.deviceType === 'phone' ? 480 : 640;
+        const cameraHeight = this.deviceType === 'phone' ? 360 : 480;
+
         this.cameraFeed = new window.Camera(videoElement, {
             onFrame: async () => {
                 await this.hands.send({ image: videoElement });
             },
-            width: 640,
-            height: 480
+            width: cameraWidth,
+            height: cameraHeight,
+            facingMode: this.isMobile ? 'user' : undefined // Ensure front camera on mobile
         });
         this.cameraFeed.start();
     }
@@ -149,6 +189,15 @@ export class ParticleController {
      * Setup event listeners for UI interactions
      */
     setupEventListeners() {
+        // Mobile UI toggle button
+        const toggleBtn = document.getElementById('ui-toggle');
+        const uiContainer = document.getElementById('ui-container');
+        if (toggleBtn && this.isMobile) {
+            toggleBtn.addEventListener('click', () => {
+                uiContainer.classList.toggle('collapsed');
+            });
+        }
+
         // Shape buttons
         document.querySelectorAll('.shape-btn').forEach(btn => {
             btn.addEventListener('click', () => {

@@ -3,6 +3,27 @@
  * Central configuration for the particle system
  */
 
+// Mobile device detection utility
+export const DeviceDetector = {
+    isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    },
+    isTablet() {
+        return /(iPad|tablet|playbook|silk)|(android(?!.*mobile))/i.test(navigator.userAgent);
+    },
+    isPhone() {
+        return this.isMobile() && !this.isTablet();
+    },
+    isTouchDevice() {
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    },
+    getDeviceType() {
+        if (this.isPhone()) return 'phone';
+        if (this.isTablet()) return 'tablet';
+        return 'desktop';
+    }
+};
+
 export const CONFIG = {
     particle: {
         count: 18000,
@@ -53,4 +74,25 @@ export const CONFIG = {
         radius: 5.0       // Radius for radial gradient calculation
     }
 };
+
+// Mobile-optimized configuration
+export function getOptimizedConfig() {
+    const deviceType = DeviceDetector.getDeviceType();
+    const config = JSON.parse(JSON.stringify(CONFIG)); // Deep clone
+
+    if (deviceType === 'phone') {
+        // Aggressive optimization for phones
+        config.particle.count = 5000;
+        config.particle.size = 0.11;
+        config.hand.maxHands = 1;
+        config.hand.detectionConfidence = 0.6;
+        config.hand.trackingConfidence = 0.5;
+    } else if (deviceType === 'tablet') {
+        // Moderate optimization for tablets
+        config.particle.count = 10000;
+        config.particle.size = 0.10;
+    }
+
+    return config;
+}
 

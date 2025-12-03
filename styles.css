@@ -40,6 +40,52 @@ body > canvas {
     100% { transform: translate(-10px, -10px); }
 }
 
+/* UI Toggle Button for Mobile */
+.ui-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.9) 0%,
+        rgba(123, 47, 247, 0.9) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 1.5rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow:
+        0 8px 32px rgba(0, 212, 255, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.ui-toggle-btn:hover {
+    transform: scale(1.1);
+    box-shadow:
+        0 12px 40px rgba(0, 212, 255, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+.ui-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.toggle-icon {
+    animation: rotateIcon 3s linear infinite;
+}
+
+@keyframes rotateIcon {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Modern Glassmorphic UI Panel */
 #ui-container {
     position: absolute;
@@ -64,6 +110,13 @@ body > canvas {
     overflow-y: auto;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+}
+
+/* Collapsed state for mobile */
+#ui-container.collapsed {
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 #ui-container::before {
@@ -1043,5 +1096,503 @@ label {
 
 .gradient-mode-btn.active::before {
     opacity: 0;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+/* Tablet Styles (Portrait: 768px - 1024px) */
+@media screen and (max-width: 1024px) and (min-width: 768px) {
+    #ui-container {
+        width: 320px;
+        padding: 24px;
+        max-height: calc(100vh - 30px);
+        top: 15px;
+        left: 15px;
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .header-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 24px;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .subtitle {
+        font-size: 0.7rem;
+    }
+
+    /* Slightly larger buttons for touch */
+    .shape-btn {
+        padding: 16px 10px;
+        font-size: 0.68rem;
+    }
+
+    .shape-btn .icon {
+        font-size: 1.6rem;
+    }
+
+    #camera-preview {
+        width: 200px;
+        height: 150px;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .instructions {
+        font-size: 0.68rem;
+        padding: 16px 28px;
+        bottom: 15px;
+    }
+}
+
+/* Mobile Phone Styles (Portrait: < 768px) */
+@media screen and (max-width: 767px) {
+    /* Show toggle button on mobile */
+    .ui-toggle-btn {
+        display: flex;
+    }
+
+    /* UI Container - Full width on very small screens, collapsible */
+    #ui-container {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        max-width: 400px;
+        padding: 20px;
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        margin: 0 auto;
+        border-radius: 20px;
+    }
+
+    /* Smaller header for mobile */
+    .header {
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+    }
+
+    .header-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    h1 {
+        font-size: 1.05rem;
+    }
+
+    .subtitle {
+        font-size: 0.65rem;
+        margin-top: 4px;
+    }
+
+    /* Labels */
+    label {
+        margin-top: 18px;
+        margin-bottom: 10px;
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
+    }
+
+    /* Shape buttons - 2 column grid on mobile */
+    .grid-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .shape-btn {
+        padding: 16px 8px;
+        font-size: 0.65rem;
+        min-height: 80px;
+    }
+
+    .shape-btn .icon {
+        font-size: 1.5rem;
+    }
+
+    /* Color grid - 4 columns on mobile */
+    .color-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
+    }
+
+    .color-picker-row {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    .color-picker-input {
+        width: 42px;
+        height: 42px;
+    }
+
+    .color-value-display {
+        font-size: 0.9rem;
+    }
+
+    /* Mode toggle buttons */
+    .mode-toggle {
+        padding: 5px;
+        gap: 5px;
+    }
+
+    .mode-btn {
+        padding: 12px 8px;
+        font-size: 0.65rem;
+    }
+
+    .gradient-mode-btn {
+        padding: 12px 8px;
+        font-size: 0.65rem;
+    }
+
+    /* Status display */
+    #hand-status {
+        padding: 14px 16px;
+        font-size: 0.75rem;
+        margin-top: 18px;
+    }
+
+    .status-dot {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Indicators */
+    .indicator-group {
+        padding: 12px;
+        margin-top: 18px;
+    }
+
+    .indicator-row {
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .indicator-label {
+        font-size: 0.6rem;
+        width: 50px;
+    }
+
+    .indicator-bar {
+        height: 8px;
+    }
+
+    /* Rotation visualization */
+    .rotation-viz {
+        gap: 24px;
+        padding: 16px 12px 44px 12px;
+    }
+
+    .axis-indicator {
+        width: 56px;
+        height: 56px;
+    }
+
+    .axis-indicator::before {
+        width: 3px;
+        height: 20px;
+    }
+
+    .axis-label {
+        font-size: 0.75rem;
+        bottom: -24px;
+    }
+
+    .axis-description {
+        font-size: 0.55rem;
+        bottom: -38px;
+    }
+
+    /* Camera preview - smaller and repositioned */
+    #camera-preview {
+        width: 140px;
+        height: 105px;
+        bottom: 10px;
+        right: 10px;
+        border-radius: 16px;
+    }
+
+    /* Instructions - simplified for mobile */
+    .instructions {
+        bottom: 10px;
+        left: 10px;
+        right: auto;
+        transform: none;
+        max-width: 280px;
+        padding: 12px 18px;
+        font-size: 0.6rem;
+        gap: 8px;
+        border-radius: 20px;
+    }
+
+    .instructions-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .instructions span {
+        font-size: 0.6rem;
+    }
+
+    /* Gradient controls */
+    .gradient-toggle-wrapper {
+        padding: 12px 14px;
+    }
+
+    .gradient-toggle-label {
+        font-size: 0.8rem;
+    }
+
+    .gradient-toggle-slider {
+        width: 48px;
+        height: 26px;
+    }
+
+    .gradient-toggle-slider::before {
+        width: 18px;
+        height: 18px;
+    }
+
+    .gradient-toggle input[type="checkbox"]:checked + .gradient-toggle-slider::before {
+        left: 24px;
+    }
+
+    .gradient-controls {
+        padding: 12px;
+    }
+}
+
+/* Extra Small Phones (< 375px) */
+@media screen and (max-width: 374px) {
+    #ui-container {
+        padding: 16px;
+        max-height: calc(100vh - 140px);
+    }
+
+    .header-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 0.95rem;
+    }
+
+    .subtitle {
+        font-size: 0.6rem;
+    }
+
+    .shape-btn {
+        padding: 12px 6px;
+        min-height: 70px;
+    }
+
+    .shape-btn .icon {
+        font-size: 1.3rem;
+    }
+
+    /* Even smaller color grid */
+    .color-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Hide camera preview on very small screens to save space */
+    #camera-preview {
+        width: 100px;
+        height: 75px;
+    }
+
+    .instructions {
+        font-size: 0.55rem;
+        padding: 10px 14px;
+    }
+}
+
+/* Landscape mode adjustments for mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    #ui-container {
+        top: 10px;
+        left: 10px;
+        width: 280px;
+        max-height: calc(100vh - 20px);
+        padding: 16px;
+    }
+
+    .header {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+    }
+
+    .header-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    h1 {
+        font-size: 0.95rem;
+    }
+
+    .subtitle {
+        font-size: 0.6rem;
+    }
+
+    label {
+        margin-top: 12px;
+        margin-bottom: 8px;
+        font-size: 0.6rem;
+    }
+
+    .grid-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    .shape-btn {
+        padding: 10px 6px;
+        min-height: 60px;
+        font-size: 0.6rem;
+    }
+
+    .shape-btn .icon {
+        font-size: 1.2rem;
+    }
+
+    .color-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        padding: 8px;
+    }
+
+    .mode-toggle, .gradient-controls {
+        margin-top: 8px;
+    }
+
+    .mode-btn, .gradient-mode-btn {
+        padding: 8px 6px;
+        font-size: 0.6rem;
+    }
+
+    #hand-status {
+        padding: 10px 12px;
+        font-size: 0.7rem;
+        margin-top: 12px;
+    }
+
+    .indicator-group {
+        padding: 10px;
+        margin-top: 12px;
+    }
+
+    .indicator-row {
+        margin-bottom: 8px;
+    }
+
+    .rotation-viz {
+        padding: 12px 10px 36px 10px;
+        gap: 20px;
+    }
+
+    .axis-indicator {
+        width: 48px;
+        height: 48px;
+    }
+
+    .axis-label {
+        bottom: -20px;
+        font-size: 0.7rem;
+    }
+
+    .axis-description {
+        bottom: -32px;
+        font-size: 0.5rem;
+    }
+
+    #camera-preview {
+        width: 120px;
+        height: 90px;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .instructions {
+        display: none; /* Hide instructions in landscape to save space */
+    }
+}
+
+/* Touch device specific enhancements */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch target sizes */
+    .shape-btn,
+    .mode-btn,
+    .gradient-mode-btn,
+    .color-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Remove hover effects for touch devices */
+    .shape-btn:hover,
+    .mode-btn:hover,
+    .gradient-mode-btn:hover {
+        transform: none;
+    }
+
+    /* Add active/tap states */
+    .shape-btn:active,
+    .mode-btn:active,
+    .gradient-mode-btn:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+
+    .color-btn:active {
+        transform: scale(0.9);
+    }
+
+    /* Disable some expensive hover animations on touch devices */
+    #ui-container:hover {
+        transform: none;
+    }
+
+    .instructions:hover {
+        transform: translateX(-50%);
+    }
+
+    #camera-preview:hover {
+        transform: none;
+    }
+}
+
+/* Safe area adjustments for devices with notches */
+@supports (padding: env(safe-area-inset-top)) {
+    #ui-container {
+        top: max(10px, env(safe-area-inset-top));
+        left: max(10px, env(safe-area-inset-left));
+    }
+
+    #camera-preview {
+        bottom: max(10px, env(safe-area-inset-bottom));
+        right: max(10px, env(safe-area-inset-right));
+    }
+
+    .instructions {
+        bottom: max(10px, env(safe-area-inset-bottom));
+        left: max(10px, env(safe-area-inset-left));
+    }
 }
 
